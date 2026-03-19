@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Seguimiento de prospectos a clientes - Sistema de Seguimiento de Marketing
 
 ## 📋 Descripción
@@ -231,3 +232,6 @@ Para dudas o problemas:
 1. Revisa los logs en la carpeta de la aplicación
 2. Verifica la conexión a la base de datos
 3. Revisa que el firewall permita el puerto 1433
+=======
+# Sysmark
+>>>>>>> d4838f95c4ccce39674bf7139e54b470c3757cf2

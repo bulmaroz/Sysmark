@@ -72,3 +72,5 @@ appsettings.Development.json
 config.txt
 **/bin/
 **/obj/
+instalador/
+instalador/
