@@ -10,5 +10,17 @@ namespace SysMarkModerno.Views
             InitializeComponent();
             DataContext = viewModel;
         }
+
+        private void Item_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            var item = ((System.Windows.Controls.ListViewItem)sender).DataContext as SysMarkModerno.Models.Marketing;
+            if (item != null)
+            {
+                var vm = DataContext as UpcomingCallsViewModel;
+                if (vm != null) vm.Seleccionado = item;
+                DialogResult = true;
+                Close();
+            }
+        }
     }
 }

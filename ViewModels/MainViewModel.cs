@@ -293,67 +293,80 @@ namespace SysMarkModerno.ViewModels
                             additionalEmails.Add(contacto.Correo);
                         }
                     }
-                    if (RegistroSeleccionado.TieneLlamada && RegistroSeleccionado.ProximaLlamada.HasValue)
+                    bool esSoloSeguimiento = RegistroSeleccionado.SeguimientoActivo && !RegistroSeleccionado.TieneLlamada;
+
+                    if (esSoloSeguimiento)
                     {
-                        string emailSubject = $"Recordatorio Llamada: {RegistroSeleccionado.Empresa} - {proyectoStr}";
-                        
-                        // Extraer el último comentario para incluirlo como mensaje en el correo
-                        string ultimoComentario = string.Empty;
-                        if (!string.IsNullOrWhiteSpace(RegistroSeleccionado.Comentarios))
-                        {
-                            var lineas = RegistroSeleccionado.Comentarios.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
-                            if (lineas.Length > 0) ultimoComentario = lineas.Last();
-                        }
-
-                        string emailBody = Helpers.EmailTemplateHelper.GenerarCuerpoEmailMarketing(RegistroSeleccionado, emailSubject, proyectoStr, ultimoComentario);
-
-                        (correoEnviado, errorCorreo) = await _emailService.SendCalendarInviteAsync(
-                            emailSubject,
-                            emailBody,
-                            RegistroSeleccionado.ProximaLlamada.Value,
-                            RegistroSeleccionado.ProximaLlamada.Value.AddMinutes(30),
-                            "Llamada Telefónica",
-                            additionalEmails 
-                        );
-                    }
-                    else
-                    {
-                        string emailSubject = $"Nuevo Registro Marketing: {RegistroSeleccionado.Empresa} - {proyectoStr}";
-                        
-                        // Extraer el último comentario para incluirlo como mensaje en el correo
-                        string ultimoComentario = string.Empty;
-                        if (!string.IsNullOrWhiteSpace(RegistroSeleccionado.Comentarios))
-                        {
-                            var lineas = RegistroSeleccionado.Comentarios.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
-                            if (lineas.Length > 0) ultimoComentario = lineas.Last();
-                        }
-
-                        string emailBody = Helpers.EmailTemplateHelper.GenerarCuerpoEmailMarketing(RegistroSeleccionado, emailSubject, proyectoStr, ultimoComentario);
-
-                        (correoEnviado, errorCorreo) = await _emailService.SendEmailAsync(
-                            emailSubject,
-                            emailBody,
-                            additionalEmails 
-                        );
-                    }
-
-                    if (correoEnviado)
-                    {
-                        mensajeExito += "\n📧 Correo de notificación enviado.";
                         _notificationService.MostrarNotificacion(
-                            "Guardado y Notificado",
-                            mensajeExito,
+                            "Guardado",
+                            mensajeExito + "\n📝 Seguimiento interno guardado (Sin correo).",
                             Notifications.Wpf.NotificationType.Success
                         );
                     }
                     else
                     {
-                        mensajeExito += $"\n⚠️ Error al enviar correo: {errorCorreo}";
-                        _notificationService.MostrarNotificacion(
-                            "Guardado (Sin Correo)",
-                            mensajeExito,
-                            Notifications.Wpf.NotificationType.Warning
-                        );
+                        if (RegistroSeleccionado.TieneLlamada && RegistroSeleccionado.ProximaLlamada.HasValue)
+                        {
+                            string emailSubject = $"Recordatorio Llamada: {RegistroSeleccionado.Empresa} - {proyectoStr}";
+                            
+                            // Extraer el último comentario para incluirlo como mensaje en el correo
+                            string ultimoComentario = string.Empty;
+                            if (!string.IsNullOrWhiteSpace(RegistroSeleccionado.Comentarios))
+                            {
+                                var lineas = RegistroSeleccionado.Comentarios.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+                                if (lineas.Length > 0) ultimoComentario = lineas.Last();
+                            }
+
+                            string emailBody = Helpers.EmailTemplateHelper.GenerarCuerpoEmailMarketing(RegistroSeleccionado, emailSubject, proyectoStr, ultimoComentario);
+
+                            (correoEnviado, errorCorreo) = await _emailService.SendCalendarInviteAsync(
+                                emailSubject,
+                                emailBody,
+                                RegistroSeleccionado.ProximaLlamada.Value,
+                                RegistroSeleccionado.ProximaLlamada.Value.AddMinutes(30),
+                                "Llamada Telefónica",
+                                additionalEmails 
+                            );
+                        }
+                        else
+                        {
+                            string emailSubject = $"Nuevo Registro Marketing: {RegistroSeleccionado.Empresa} - {proyectoStr}";
+                            
+                            // Extraer el último comentario para incluirlo como mensaje en el correo
+                            string ultimoComentario = string.Empty;
+                            if (!string.IsNullOrWhiteSpace(RegistroSeleccionado.Comentarios))
+                            {
+                                var lineas = RegistroSeleccionado.Comentarios.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+                                if (lineas.Length > 0) ultimoComentario = lineas.Last();
+                            }
+
+                            string emailBody = Helpers.EmailTemplateHelper.GenerarCuerpoEmailMarketing(RegistroSeleccionado, emailSubject, proyectoStr, ultimoComentario);
+
+                            (correoEnviado, errorCorreo) = await _emailService.SendEmailAsync(
+                                emailSubject,
+                                emailBody,
+                                additionalEmails 
+                            );
+                        }
+
+                        if (correoEnviado)
+                        {
+                            mensajeExito += "\n📧 Correo de notificación enviado.";
+                            _notificationService.MostrarNotificacion(
+                                "Guardado y Notificado",
+                                mensajeExito,
+                                Notifications.Wpf.NotificationType.Success
+                            );
+                        }
+                        else
+                        {
+                            mensajeExito += $"\n⚠️ Error al enviar correo: {errorCorreo}";
+                            _notificationService.MostrarNotificacion(
+                                "Guardado (Sin Correo)",
+                                mensajeExito,
+                                Notifications.Wpf.NotificationType.Warning
+                            );
+                        }
                     }
                     await CargarDatosAsync();
                 }
@@ -445,7 +458,31 @@ namespace SysMarkModerno.ViewModels
         {
             var window = _serviceProvider.GetRequiredService<UpcomingCallsWindow>();
             window.Owner = Application.Current.MainWindow;
-            window.ShowDialog();
+            if (window.ShowDialog() == true)
+            {
+                var vm = window.DataContext as UpcomingCallsViewModel;
+                if (vm?.Seleccionado != null)
+                {
+                    var recordInList = RegistrosFiltrados.FirstOrDefault(r => r.IdEmpresa == vm.Seleccionado.IdEmpresa);
+                    RegistroSeleccionado = recordInList ?? vm.Seleccionado;
+                }
+            }
+        }
+
+        [RelayCommand]
+        private void VerSeguimientosProximos()
+        {
+            var window = _serviceProvider.GetRequiredService<UpcomingFollowUpsWindow>();
+            window.Owner = Application.Current.MainWindow;
+            if (window.ShowDialog() == true)
+            {
+                var vm = window.DataContext as UpcomingFollowUpsViewModel;
+                if (vm?.Seleccionado != null)
+                {
+                    var recordInList = RegistrosFiltrados.FirstOrDefault(r => r.IdEmpresa == vm.Seleccionado.IdEmpresa);
+                    RegistroSeleccionado = recordInList ?? vm.Seleccionado;
+                }
+            }
         }
 
         [RelayCommand]

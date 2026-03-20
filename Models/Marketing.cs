@@ -35,6 +35,8 @@ namespace SysMarkModerno.Models
         private string _celular;
         private string _celularContacto2;
         private bool _tieneLlamada;
+        private DateTime? _seguimiento;
+        private bool _seguimientoActivo;
 
         public int IdEmpresa
         {
@@ -208,6 +210,18 @@ namespace SysMarkModerno.Models
         {
             get => _tieneLlamada;
             set { _tieneLlamada = value; OnPropertyChanged(); }
+        }
+
+        public DateTime? Seguimiento
+        {
+            get => _seguimiento;
+            set { _seguimiento = value; OnPropertyChanged(); }
+        }
+
+        public bool SeguimientoActivo
+        {
+            get => _seguimientoActivo;
+            set { _seguimientoActivo = value; OnPropertyChanged(); }
         }
 
         // Propiedades calculadas

@@ -61,6 +61,16 @@
                             </StackPanel>
                         </Button>
 
+                        <Button ToolTip="Ver Seguimientos Pendientes"
+                                Command="{Binding VerSeguimientosProximosCommand}"
+                                Margin="0,0,16,0"
+                                Style="{StaticResource MaterialDesignRaisedSecondaryButton}">
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="CalendarCheck" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                                <TextBlock Text="SEGUIMIENTOS" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+
                         <Button ToolTip="Gestión de Empleados"
                                 Command="{Binding ToggleEmployeeDrawerCommand}"
                                 Margin="0,0,16,0"
@@ -456,54 +466,86 @@
                                            Style="{StaticResource MaterialDesignOutlinedDatePicker}"
                                            Margin="0,0,0,16"/>
 
-                                <StackPanel Grid.Row="0" Grid.Column="2" Orientation="Horizontal">
-                                    <CheckBox Content="Agendar llamada"
-                                              IsChecked="{Binding TieneLlamada}"
-                                              Margin="0,0,16,0">
-                                        <CheckBox.Style>
-                                            <Style TargetType="CheckBox" BasedOn="{StaticResource MaterialDesignCheckBox}">
-                                                <Setter Property="Foreground" Value="Black"/>
-                                                <Style.Triggers>
-                                                    <Trigger Property="IsChecked" Value="True">
-                                                        <Setter Property="Foreground" Value="Green"/>
-                                                    </Trigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </CheckBox.Style>
-                                    </CheckBox>
-                                    
-                                    <DatePicker materialDesign:HintAssist.Hint="Próxima Llamada"
-                                               SelectedDate="{Binding ProximaLlamada}"
-                                               Style="{StaticResource MaterialDesignOutlinedDatePicker}"
-                                               IsEnabled="{Binding TieneLlamada}"
-                                               Margin="0,0,16,16"/>
-
-                                    <materialDesign:TimePicker materialDesign:HintAssist.Hint="Hora"
-                                                SelectedTime="{Binding ProximaLlamada}"
-                                                Style="{StaticResource MaterialDesignOutlinedTimePicker}"
-                                                IsEnabled="{Binding TieneLlamada}"
-                                                Margin="0,0,16,16"/>
-
-                                    <materialDesign:PopupBox StaysOpen="True">
-                                        <materialDesign:PopupBox.ToggleContent>
-                                            <StackPanel Orientation="Horizontal">
-                                                <materialDesign:PackIcon Kind="AccountMultiplePlus" Margin="0,0,8,0" VerticalAlignment="Center"/>
-                                                <TextBlock Text="Contactos Extras" VerticalAlignment="Center"/>
-                                            </StackPanel>
-                                        </materialDesign:PopupBox.ToggleContent>
+                                <StackPanel Grid.Row="0" Grid.Column="2" Orientation="Vertical">
+                                    <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                                        <CheckBox Content="Agendar llamada"
+                                                  IsChecked="{Binding TieneLlamada}"
+                                                  Margin="0,0,16,0">
+                                            <CheckBox.Style>
+                                                <Style TargetType="CheckBox" BasedOn="{StaticResource MaterialDesignCheckBox}">
+                                                    <Setter Property="Foreground" Value="Black"/>
+                                                    <Style.Triggers>
+                                                        <Trigger Property="IsChecked" Value="True">
+                                                            <Setter Property="Foreground" Value="Green"/>
+                                                        </Trigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </CheckBox.Style>
+                                        </CheckBox>
                                         
-                                        <ScrollViewer MaxHeight="300" Width="250">
-                                            <ItemsControl ItemsSource="{Binding DataContext.ListaContactosExtras, RelativeSource={RelativeSource AncestorType=Window}}">
-                                                <ItemsControl.ItemTemplate>
-                                                    <DataTemplate>
-                                                        <CheckBox Content="{Binding Nombre}" 
-                                                                  IsChecked="{Binding IsSelected}"
-                                                                  Margin="10,5"/>
-                                                    </DataTemplate>
-                                                </ItemsControl.ItemTemplate>
-                                            </ItemsControl>
-                                        </ScrollViewer>
-                                    </materialDesign:PopupBox>
+                                        <DatePicker materialDesign:HintAssist.Hint="Próxima Llamada"
+                                                   SelectedDate="{Binding ProximaLlamada}"
+                                                   Style="{StaticResource MaterialDesignOutlinedDatePicker}"
+                                                   IsEnabled="{Binding TieneLlamada}"
+                                                   Margin="0,0,16,0"/>
+
+                                        <materialDesign:TimePicker materialDesign:HintAssist.Hint="Hora"
+                                                    SelectedTime="{Binding ProximaLlamada}"
+                                                    Style="{StaticResource MaterialDesignOutlinedTimePicker}"
+                                                    IsEnabled="{Binding TieneLlamada}"
+                                                    Margin="0,0,16,0"/>
+
+                                        <materialDesign:PopupBox StaysOpen="True">
+                                            <materialDesign:PopupBox.ToggleContent>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <materialDesign:PackIcon Kind="AccountMultiplePlus" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                                                    <TextBlock Text="Contactos Extras" VerticalAlignment="Center"/>
+                                                </StackPanel>
+                                            </materialDesign:PopupBox.ToggleContent>
+                                            
+                                            <ScrollViewer MaxHeight="300" Width="250">
+                                                <ItemsControl ItemsSource="{Binding DataContext.ListaContactosExtras, RelativeSource={RelativeSource AncestorType=Window}}">
+                                                    <ItemsControl.ItemTemplate>
+                                                        <DataTemplate>
+                                                            <CheckBox Content="{Binding Nombre}" 
+                                                                      IsChecked="{Binding IsSelected}"
+                                                                      Margin="10,5"/>
+                                                        </DataTemplate>
+                                                    </ItemsControl.ItemTemplate>
+                                                </ItemsControl>
+                                            </ScrollViewer>
+                                        </materialDesign:PopupBox>
+                                    </StackPanel>
+
+                                    <!-- Seguimiento Interno Section -->
+                                    <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                                        <CheckBox Content="Seguimiento interno"
+                                                  IsChecked="{Binding SeguimientoActivo}"
+                                                  Margin="0,0,16,0">
+                                            <CheckBox.Style>
+                                                <Style TargetType="CheckBox" BasedOn="{StaticResource MaterialDesignCheckBox}">
+                                                    <Setter Property="Foreground" Value="Black"/>
+                                                    <Style.Triggers>
+                                                        <Trigger Property="IsChecked" Value="True">
+                                                            <Setter Property="Foreground" Value="Blue"/>
+                                                        </Trigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </CheckBox.Style>
+                                        </CheckBox>
+                                        
+                                        <DatePicker materialDesign:HintAssist.Hint="Seguimiento"
+                                                   SelectedDate="{Binding Seguimiento}"
+                                                   Style="{StaticResource MaterialDesignOutlinedDatePicker}"
+                                                   IsEnabled="{Binding SeguimientoActivo}"
+                                                   Margin="0,0,16,0"/>
+
+                                        <materialDesign:TimePicker materialDesign:HintAssist.Hint="Hora"
+                                                    SelectedTime="{Binding Seguimiento}"
+                                                    Style="{StaticResource MaterialDesignOutlinedTimePicker}"
+                                                    IsEnabled="{Binding SeguimientoActivo}"
+                                                    Margin="0,0,16,0"/>
+                                    </StackPanel>
                                 </StackPanel>
 
                                 <CheckBox Grid.Row="1" Grid.Column="0"

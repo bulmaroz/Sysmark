@@ -66,6 +66,32 @@ namespace SysMarkModerno.Services
                         NotificationType.Information
                     );
                 }
+
+                // --------- SEGUIMIENTOS STARTUP LOGIC ---------
+                var seguimientos = await _databaseService.ObtenerSeguimientosProximosAsync(3); // Fetch seguimientos upcoming in 3 days or PAST
+                var seguimientosAtrasados = seguimientos.Where(s => 
+                    s.Seguimiento?.Date < DateTime.Today).ToList();
+                var seguimientosProximos = seguimientos.Where(s => 
+                    s.Seguimiento?.Date >= DateTime.Today && 
+                    s.Seguimiento?.Date <= DateTime.Today.AddDays(3)).ToList();
+
+                if (seguimientosAtrasados.Any())
+                {
+                    MostrarNotificacion(
+                        "⚠️ Seguimientos Atrasados",
+                        $"Tienes {seguimientosAtrasados.Count} seguimiento(s) atrasados pendientes",
+                        NotificationType.Error
+                    );
+                }
+
+                if (seguimientosProximos.Any())
+                {
+                    MostrarNotificacion(
+                        "📅 Seguimientos Pendientes",
+                        $"Tienes {seguimientosProximos.Count} seguimiento(s) pendientes en los próximos 3 días",
+                        NotificationType.Information
+                    );
+                }
             }
             catch (Exception ex)
             {

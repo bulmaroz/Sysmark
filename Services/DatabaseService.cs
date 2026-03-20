@@ -61,7 +61,9 @@ namespace SysMarkModerno.Services
                     Clientede as ClienteDe,
                     CELULAR as Celular,
                     CELULARCONTACTO2 as CelularContacto2,
-                    TieneLlamada
+                    TieneLlamada,
+                    [seguimiento] as Seguimiento,
+                    Seguimiento_Activo as SeguimientoActivo
                 FROM MARKETING 
                 ORDER BY IDEMPRESA DESC";
 
@@ -131,7 +133,9 @@ namespace SysMarkModerno.Services
                     Clientede as ClienteDe,
                     CELULAR as Celular,
                     CELULARCONTACTO2 as CelularContacto2,
-                    TieneLlamada
+                    TieneLlamada,
+                    [seguimiento] as Seguimiento,
+                    Seguimiento_Activo as SeguimientoActivo
                 FROM MARKETING 
                 {whereClause}
                 ORDER BY IDEMPRESA DESC";
@@ -165,6 +169,31 @@ namespace SysMarkModerno.Services
             });
         }
 
+        public async Task<IEnumerable<Marketing>> ObtenerSeguimientosProximosAsync(int diasAdelante = 7)
+        {
+            using var connection = CreateConnection();
+            const string query = @"
+                SELECT 
+                    IDEMPRESA as IdEmpresa,
+                    EMPRESA as Empresa,
+                    CONTACTO as Contacto,
+                    TEL as Telefono,
+                    [seguimiento] as Seguimiento,
+                    Seguimiento_Activo as SeguimientoActivo,
+                    ESTATUS as Estatus,
+                    COMENTARIOS as Comentarios
+                FROM MARKETING 
+                WHERE Seguimiento_Activo = 1 
+                    AND [seguimiento] IS NOT NULL
+                    AND [seguimiento] <= @FechaFin
+                ORDER BY [seguimiento] ASC";
+
+            return await connection.QueryAsync<Marketing>(query, new
+            {
+                FechaFin = DateTime.Today.AddDays(diasAdelante)
+            });
+        }
+
         public async Task<bool> GuardarMarketingAsync(Marketing marketing)
         {
             using var connection = CreateConnection();
@@ -180,13 +209,15 @@ namespace SysMarkModerno.Services
                             EXTENCION, [E-MAIL], GIRO, ESTADO, CIUDAD, DIRECCION, CP, 
                             [CONTACTO 2], [PUESTO 2], TEL2, [E-MAIL2], [PROXIMA LLAMADA], 
                             [FECHA DEL CONTACTO], ESTATUS, Epicor, Opera, COMENTARIOS, 
-                            Ingresado, Clientede, CELULAR, CELULARCONTACTO2, TieneLlamada
+                            Ingresado, Clientede, CELULAR, CELULARCONTACTO2, TieneLlamada,
+                            [seguimiento], Seguimiento_Activo
                         ) VALUES (
                             @Empresa, @PaginaWeb, @ErpQueManeja, @Contacto, @Puesto, @Telefono,
                             @Extension, @Email, @Giro, @Estado, @Ciudad, @Direccion, @CodigoPostal,
                             @Contacto2, @Puesto2, @Telefono2, @Email2, @ProximaLlamada,
                             @FechaContacto, @Estatus, @ProyectoEpicor, @ProyectoOpera, @Comentarios,
-                            @IngresadoPor, @ClienteDe, @Celular, @CelularContacto2, @TieneLlamada
+                            @IngresadoPor, @ClienteDe, @Celular, @CelularContacto2, @TieneLlamada,
+                            @Seguimiento, @SeguimientoActivo
                         )";
 
                     await connection.ExecuteAsync(insertQuery, marketing);
@@ -223,7 +254,9 @@ namespace SysMarkModerno.Services
                             Clientede = @ClienteDe,
                             CELULAR = @Celular,
                             CELULARCONTACTO2 = @CelularContacto2,
-                            TieneLlamada = @TieneLlamada
+                            TieneLlamada = @TieneLlamada,
+                            [seguimiento] = @Seguimiento,
+                            Seguimiento_Activo = @SeguimientoActivo
                         WHERE IDEMPRESA = @IdEmpresa";
 
                     await connection.ExecuteAsync(updateQuery, marketing);

@@ -73,11 +73,13 @@ namespace SysMarkModerno
             // ViewModels
             services.AddSingleton<MainViewModel>();
             services.AddTransient<UpcomingCallsViewModel>();
+            services.AddTransient<UpcomingFollowUpsViewModel>();
             services.AddTransient<EmployeeViewModel>();
 
             // Views
             services.AddSingleton<MainWindow>();
             services.AddTransient<UpcomingCallsWindow>();
+            services.AddTransient<UpcomingFollowUpsWindow>();
         }
 
         private void AplicarTema()

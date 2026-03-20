@@ -9,12 +9,12 @@ using SysMarkModerno.Services;
 
 namespace SysMarkModerno.ViewModels
 {
-    public partial class UpcomingCallsViewModel : ObservableObject
+    public partial class UpcomingFollowUpsViewModel : ObservableObject
     {
         private readonly DatabaseService _databaseService;
 
         [ObservableProperty]
-        private ObservableCollection<Marketing> _upcomingCalls = new();
+        private ObservableCollection<Marketing> _upcomingFollowUps = new();
 
         [ObservableProperty]
         private bool _isBusy;
@@ -22,7 +22,7 @@ namespace SysMarkModerno.ViewModels
         [ObservableProperty]
         private Marketing _seleccionado;
 
-        public UpcomingCallsViewModel(DatabaseService databaseService)
+        public UpcomingFollowUpsViewModel(DatabaseService databaseService)
         {
             _databaseService = databaseService;
             _ = LoadDataAsync();
@@ -34,12 +34,12 @@ namespace SysMarkModerno.ViewModels
             IsBusy = true;
             try
             {
-                var calls = await _databaseService.ObtenerLlamadasProximasAsync(7);
-                UpcomingCalls = new ObservableCollection<Marketing>(calls);
+                var seguimientos = await _databaseService.ObtenerSeguimientosProximosAsync(7);
+                UpcomingFollowUps = new ObservableCollection<Marketing>(seguimientos);
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error al cargar llamadas próximas: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Error al cargar seguimientos próximos: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             finally
             {
