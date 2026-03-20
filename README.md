@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Seguimiento de prospectos a clientes - Sistema de Seguimiento de Marketing
 
 ## 📋 Descripción
